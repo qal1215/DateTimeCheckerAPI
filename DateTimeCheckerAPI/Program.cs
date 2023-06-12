@@ -1,8 +1,8 @@
+﻿using DateTimeCheckerAPI;
 using DateTimeCheckerAPI.Helper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Xml.Schema;
+using System.Reflection.Metadata.Ecma335;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,21 +21,11 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-//app.MapGet("/GetDaysInMonth", (int month, int year) => DateTimeCheckerAPI.Helper.Checker.DaysInMonth(year, month));
-
-app.MapPost("/GetDaysInMonth", ([FromBody] YearMonth yearMonth) =>
+//Get days in month POST
+/*app.MapPost("/GetDaysInMonth", ([FromBody] YearMonth yearMonth) =>
 {
 	var month = yearMonth.Month;
 	var year = yearMonth.Year;
-
-	if (month.GetType() != typeof(int))
-	{
-		return Results.BadRequest("Input data for Month is incorrect format!");
-	}
-	else if (year.GetType() != typeof(int))
-	{
-		return Results.BadRequest("Input data for Year is incorrect format!");
-	}
 
 	if (month < 1 || month > 12)
 	{
@@ -56,10 +46,19 @@ app.MapPost("/GetDaysInMonth", ([FromBody] YearMonth yearMonth) =>
 		return Results.Ok(result);
 	}
 }
-);
+);*/
 
-app.MapGet("/GetDaysInMonth/", (int year, int month) =>
+app.MapGet("/GetDaysInMonth", (int year, int month) =>
 {
+	if (month < 1 || month >= 12) //Bug here 👈(ﾟヮﾟ👈)
+	{
+		return Results.BadRequest("Input data for Month is out range!");
+	}
+	else if (year < 1000 || year > 3000)
+	{
+		return Results.BadRequest("Input data for Year is out range!");
+	}
+
 	var result = Checker.DaysInMonth(year, month);
 	if (result == 0)
 	{
@@ -72,7 +71,7 @@ app.MapGet("/GetDaysInMonth/", (int year, int month) =>
 }
 );
 
-app.MapGet("/CheckValiDate", (int year, int month, int day) =>
+/*app.MapGet("/CheckValidDate", (int year, int month, int day) =>
 {
 	if (day.GetType() != typeof(int))
 	{
@@ -87,7 +86,8 @@ app.MapGet("/CheckValiDate", (int year, int month, int day) =>
 		return Results.BadRequest("Input data for Year is incorrect format!");
 	}
 
-	if (day < 1 || day > 31)
+	// bug here
+	if (day < 1 || day >= 31)
 	{
 		return Results.BadRequest("Input data for Date is out range!");
 	}
@@ -101,20 +101,23 @@ app.MapGet("/CheckValiDate", (int year, int month, int day) =>
 	}
 
 
-	var result = Checker.IsValiDate(year, month, day);
+	var result = Checker.IsValidDate(year, month, day);
 	if (result)
 	{
-		var message = $"The date {year}/{month}/{day} is valid";
+
+		var dateTime = DateTime.Parse($"{year}/{month}/{day}");
+		var message = $"The date {dateTime.ToString("D")} is valid";
 		return Results.Ok(message);
 	}
 	else
 	{
-		var message = $"The date {year}/{month}/{day} is invalid";
+		var message = $"The date is invalid";
 		return Results.BadRequest(message);
 	}
-});
+});*/
 
-app.MapPost("/CheckValiDate", ([FromBody] Date date) =>
+
+app.MapPost("/CheckValidDate", ([FromBody] Date date) =>
 {
 	var day = date.Day;
 	var month = date.Month;
@@ -133,7 +136,7 @@ app.MapPost("/CheckValiDate", ([FromBody] Date date) =>
 		return Results.BadRequest("Input data for Year is incorrect format!");
 	}
 
-	if (day < 1 || day > 31)
+	if (day < 1 || day > 31) //Bug here 👈(ﾟヮﾟ👈)
 	{
 		return Results.BadRequest("Input data for Date is out range!");
 	}
@@ -147,15 +150,16 @@ app.MapPost("/CheckValiDate", ([FromBody] Date date) =>
 	}
 
 
-	var result = Checker.IsValiDate(year, month, day);
+	var result = Checker.IsValidDate(year, month, day);
 	if (result)
 	{
-		var message = $"The date {year}/{month}/{day} is valid";
+		var dateTime = DateTime.Parse($"{year}/{month}/{day}");
+		var message = $"The date {dateTime.ToString("D")} is valid";
 		return Results.Ok(message);
 	}
 	else
 	{
-		var message = $"The date {year}/{month}/{day} is invalid";
+		var message = $"The date is invalid";
 		return Results.BadRequest(message);
 	}
 });

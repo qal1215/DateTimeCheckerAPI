@@ -35,18 +35,17 @@
 			}
 			return 0;
 		}
-		public static Boolean IsValiDate(int year, int month, int day)
+		public static Boolean IsValidDate(int year, int month, int day)
 		{
 			if (month >= 1 && month <= 12)
 			{
-				if (day >= 1)
+				if (day >= 1 && day <= 31)
 				{
 					if (day <= DaysInMonth(year, month))
 					{
 						return true;
 					}
 				}
-
 			}
 			return false;
 		}
