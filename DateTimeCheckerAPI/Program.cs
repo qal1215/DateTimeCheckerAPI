@@ -48,7 +48,7 @@ app.UseHttpsRedirection();
 }
 );*/
 
-app.MapGet("/GetDaysInMonth", (int year, int month) =>
+app.MapGet("/DaysInMonth", (int year, int month) =>
 {
 	if (month < 1 || month >= 12) //Bug here 👈(ﾟヮﾟ👈)
 	{
@@ -68,8 +68,7 @@ app.MapGet("/GetDaysInMonth", (int year, int month) =>
 	{
 		return Results.Ok(result);
 	}
-}
-);
+});
 
 /*app.MapGet("/CheckValidDate", (int year, int month, int day) =>
 {
@@ -156,6 +155,7 @@ app.MapPost("/CheckValidDate", ([FromBody] Date date) =>
 		var dateTime = DateTime.Parse($"{year}/{month}/{day}");
 		var message = $"The date {dateTime.ToString("D")} is valid";
 		return Results.Ok(message);
+		//return Results.Unauthorized();
 	}
 	else
 	{
